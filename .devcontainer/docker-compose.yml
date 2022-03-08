@@ -21,6 +21,7 @@ services:
       dockerfile: Dockerfile
       args:
         - PHOENIX_USER_NAME=${PHOENIX_USER_NAME}
+        - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
 
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
@@ -42,10 +43,11 @@ services:
     tty: true
  
   localstack:
-    container_name: localstack
+    # container_name: localstack
+    hostname: localstack
     image: localstack/localstack:latest
     ports:
-      - "4583:4583"
+      - "4566:4566"
     environment:
-      - SERVICES=ssm
+      - SERVICES=ssm,s3,s3api,lambda,cloudwatch
       - DEFAULT_REGION=ap-northeast-1

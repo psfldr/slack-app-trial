@@ -1,5 +1,6 @@
 FROM archlinux/archlinux:latest
 ARG PHOENIX_USER_NAME
+ARG COMPOSE_PROJECT_NAME
 
 # アップデート
 RUN pacman -Syu --noconfirm
@@ -16,8 +17,21 @@ WORKDIR /home/$PHOENIX_USER_NAME
 RUN git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si --noconfirm && cd ../ && rm -r yay
 
 # パッケージインストール
-RUN sudo pacman -S --noconfirm neovim fish fzf neofetch tree
+RUN sudo pacman -S --noconfirm \
+    neovim \
+    neofetch \
+    fish \
+    fzf \
+    fd \
+    bat \
+    zip \
+    unzip \
+    python-pipenv
+RUN yay -S --noconfirm \
+    asdf-vm
 
-# 設定
-COPY --chown=$PHOENIX_USER_NAME:wheel phoenix_files/.bashrc /home/$PHOENIX_USER_NAME/
-COPY --chown=$PHOENIX_USER_NAME:wheel phoenix_files/.config/ /home/$PHOENIX_USER_NAME/.config/
+# asdf: install plugin
+RUN . /opt/asdf-vm/asdf.sh && asdf plugin add python https://github.com/danhper/asdf-python.git
+RUN . /opt/asdf-vm/asdf.sh && asdf plugin add awscli https://github.com/MetricMike/asdf-awscli.git
+# Install AWS CLI version 2
+RUN . /opt/asdf-vm/asdf.sh && asdf install awscli latest
